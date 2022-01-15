@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <title>Alarm Clock</title>
+    <style>
+body,html {
+    margin: 0;
+    padding: 0;
+    background-color: #12181B;
+}
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#clock {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15vw;
+    background-image: linear-gradient(180deg,
+        rgb(241, 245, 244) 0%,
+        rgb(56, 128, 112) 50%,
+        rgb(1, 37, 30) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+}
+
+.controls {
+    margin-top: 16px;
+}
+.time{
+    background-color: rgb(2, 70, 58);
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 2px;
+}
+
+.button {
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.set-alarm {
+    background-color: #02383a;
+}
+
+.clear-alarm {
+    background-color: #02383a;
+}
+.set-alarm:hover ,
+.clear-alarm:hover {
+    background-color: #021a2e;
+
+}
+    </style>
+</head>
+<body>
+    <section class="container">
+        <div id="clock"></div>
+        <input onchange="setAlarmTime(this.value)" name="alarmTime" type="datetime-local" class="time">
+        <div class="controls">
+            <button onclick="setAlarm()" class="button set-alarm">Set alarm</button>
+            <button onclick="clearAlarm()" class="button clear-alarm">Clear alarm</button>
+        </div>
+    </section>
+    <script>
+        const display = document.getElementById('clock');
+const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+audio.loop = true;
+let alarmTime = null;
+let alarmTimeout = null;
+
+function updateTime() {
+    const date = new Date();
+
+    const hour = formatTime(date.getHours());
+    const minutes = formatTime(date.getMinutes());
+    const seconds = formatTime(date.getSeconds());
+
+
+
+    display.innerText=`${hour} : ${minutes} : ${seconds}`
+}
+
+function formatTime(time) {
+    if ( time < 10 ) {
+        return '0' + time;
+    }
+    return time;
+}
+
+function setAlarmTime(value) {
+    alarmTime = value;
+}
+
+function setAlarm() {
+    if(alarmTime) {
+        const current = new Date();
+        const timeToAlarm = new Date(alarmTime);
+
+        if (timeToAlarm > current) {
+            const timeout = timeToAlarm.getTime() - current.getTime();
+            alarmTimeout = setTimeout(() => audio.play(), timeout);
+            alert('Alarm set');
+        }
+    }
+}
+
+function clearAlarm() {
+    audio.pause();
+    if (alarmTimeout) {
+        clearTimeout(alarmTimeout);
+        alert('Alarm cleared');
+    }
+}
+
+setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
